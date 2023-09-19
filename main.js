@@ -1,15 +1,9 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
-const execa = require('execa');
-// const path = require('path');
 
-// const appPath = app.getAppPath();
+let win;
 
-// const ytPath = path.join(appPath, 'utils', 'yt-dlp.exe');
-
-let mainWindow;
-
-app.on('ready', () => {
-  mainWindow = new BrowserWindow({
+const createWindow = () => {
+  win = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
@@ -17,4 +11,28 @@ app.on('ready', () => {
       contextIsolation: false,
     },
   });
+
+  win.loadFile('index.html');
+
+  ipcMain.on('download-progress', (e, progress) => {
+    win.webContents.send('update-progress', progress);
+  });
+
+  ipcMain.on('download-complete', () => {
+    win.webContents.send('download-complete');
+  });
+};
+
+app.on('ready', createWindow);
+
+app.on('activate', () => {
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createWindow();
+  }
+});
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
 });

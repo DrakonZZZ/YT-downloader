@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
     <title>Youtube Downloader</title>
 </head>
 
@@ -12,6 +13,9 @@
         <h1>Youtube video downloader</h1>
         <input type="text" placeholder="Your Youtube URL here" id="videoURL">
         <button class="downloadButton">Download</button>
+        <div id="progress-container">
+            <div id="progress-bar"></div>
+        </div>
     </div>
     <script src="renderer.js"></script>
 </body>
