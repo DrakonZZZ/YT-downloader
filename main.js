@@ -1,4 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
+const path = require('path');
+const url = require('url');
 
 let win;
 
@@ -7,12 +9,17 @@ const createWindow = () => {
     width: 800,
     height: 600,
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
+      preload: path.join(__dirname, 'preload.js'),
     },
   });
 
-  win.loadFile('index.html');
+  win.loadURL(
+    url.format({
+      pathname: path.join(__dirname, 'index.html'), // Path to your HTML file
+      protocol: 'file:',
+      slashes: true,
+    })
+  );
 
   ipcMain.on('download-progress', (e, progress) => {
     win.webContents.send('update-progress', progress);
