@@ -3,7 +3,7 @@ const homeDir = os.homedir();
 
 const downloadButton = document.getElementById('downloadButton');
 const videoInput = document.getElementById('videoURL');
-const progressBar = document.getElementById('progress-bar');
+const progressBar = document.getElementById('progressBar');
 
 let PATH;
 
@@ -29,8 +29,9 @@ downloadButton.addEventListener('click', async () => {
   try {
     await downloadVideo(videoURL, outputDir);
 
-    ipcRenderer.on('download-progress', (event, progress) => {
-      progressBar.value = progress;
+    ipcRenderer.on('download-progress', (e, progress) => {
+      console.log(progress);
+      progressBar.min = progress;
     });
   } catch (error) {
     console.log(`Error downloading: ${error}`);

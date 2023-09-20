@@ -5,7 +5,7 @@ console.log(path.join(__dirname, 'preload.js'));
 const createWindow = () => {
   const win = new BrowserWindow({
     width: 800,
-    height: 600,
+    height: 300,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       sandbox: false,
