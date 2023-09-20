@@ -1,16 +1,12 @@
 const { contextBridge, ipcRenderer } = require('electron');
-const fs = require('fs');
-const os = require('os');
-const path = require('path');
+const os = require('node:os');
+const path = require('node:path');
+const { downloadVideo } = require('./downloader.js');
 
-const { downloadVideo } = require('./downloader');
-
-contextBridge.exposeInMainWorld('electron', {
+contextBridge.exposeInMainWorld('stage', {
   os: os,
   path: path,
-});
-
-contextBridge.exposeInMainWorld('electron', {
+  ipcRenderer: ipcRenderer,
   downloadVideo: async (videoUrl, outputDir) => {
     const progressCB = (progress) => {
       ipcRenderer.send('download-progress', progress);
@@ -27,7 +23,7 @@ contextBridge.exposeInMainWorld('electron', {
       completedCB
     );
 
-    if (success) {
+    if (status) {
       ipcRenderer.send('download-status', 'success');
     } else {
       ipcRenderer.send('download-status', 'error');

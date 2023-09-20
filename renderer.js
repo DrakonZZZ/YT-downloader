@@ -1,13 +1,13 @@
-const { downloadVideo, os, path } = window.electron;
-
+const { downloadVideo, os, path, ipcRenderer } = window.stage;
 const homeDir = os.homedir();
 
 const downloadButton = document.getElementById('downloadButton');
 const videoInput = document.getElementById('videoURL');
+const progressBar = document.getElementById('progress-bar');
 
 let PATH;
 
-switch (process.platform) {
+switch (os.platform()) {
   case 'win32':
     PATH = path.join(homeDir, 'Downloads');
     break;
@@ -22,14 +22,16 @@ switch (process.platform) {
     break;
 }
 
-console.log(downloadButton);
-
 downloadButton.addEventListener('click', async () => {
   const videoURL = videoInput.value;
   const outputDir = PATH;
 
   try {
-    await window.electron.downloadVideo(videoURL, outputDir);
+    await downloadVideo(videoURL, outputDir);
+
+    ipcRenderer.on('download-progress', (event, progress) => {
+      progressBar.value = progress;
+    });
   } catch (error) {
     console.log(`Error downloading: ${error}`);
   }

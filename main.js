@@ -1,25 +1,18 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
-const path = require('path');
-const url = require('url');
+const path = require('node:path');
 
-let win;
-
+console.log(path.join(__dirname, 'preload.js'));
 const createWindow = () => {
-  win = new BrowserWindow({
+  const win = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
+      sandbox: false,
     },
   });
 
-  win.loadURL(
-    url.format({
-      pathname: path.join(__dirname, 'index.html'), // Path to your HTML file
-      protocol: 'file:',
-      slashes: true,
-    })
-  );
+  win.loadFile('index.html');
 
   ipcMain.on('download-progress', (e, progress) => {
     win.webContents.send('update-progress', progress);
