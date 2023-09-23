@@ -1,7 +1,11 @@
-const fs = require('fs');
-const ytdl = require('ytdl-core');
-const { spawn } = require('child_process');
-const ffmpegPath = require('ffmpeg-static');
+import fs from 'fs';
+import ytdl from 'ytdl-core';
+import ffmpeg from 'fluent-ffmpeg';
+import ffmpegPath from 'ffmpeg-static';
+import { spawn } from 'child_process';
+import path from 'path';
+
+ffmpeg.setFfmpegPath(ffmpegPath.path);
 
 const downloadVideo = async (videoURL, outputDir, progressCB, completedCB) => {
   try {
@@ -11,8 +15,14 @@ const downloadVideo = async (videoURL, outputDir, progressCB, completedCB) => {
     const videoStream = ytdl(videoURL, { quality: 'highestvideo' });
     const audioStream = ytdl(videoURL, { quality: 'highestaudio' });
 
-    const videopath = `${outputDir}/${videoInfo.videoDetails.title}video.mp4`;
-    const audiopath = `${outputDir}/${videoInfo.videoDetails.title}audio.mp4a`;
+    const videopath = path.join(
+      outputDir,
+      `${videoInfo.videoDetails.title}video.mp4`
+    );
+    const audiopath = path.join(
+      outputDir,
+      `${videoInfo.videoDetails.title}audio.mp4a`
+    );
 
     const outputVideoFile = fs.createWriteStream(videopath);
     const outputAudioFile = fs.createWriteStream(audiopath);
@@ -30,7 +40,7 @@ const downloadVideo = async (videoURL, outputDir, progressCB, completedCB) => {
 
       await mergeAudioVideo(
         videoInfo,
-        ffmpegPath,
+        ffmpegPath.path,
         videopath,
         audiopath,
         outputDir,
@@ -67,7 +77,7 @@ const mergeAudioVideo = async (
       '-strict',
       'experimental',
       '-y',
-      `${outputDir}/${videoInfo.videoDetails.title}.mp4`,
+      path.join(outputDir, `${videoInfo.videoDetails.title}.mp4`),
     ]);
 
     ffmpegProcess.on('close', () => {
@@ -83,4 +93,4 @@ const mergeAudioVideo = async (
   }
 };
 
-module.exports = { downloadVideo };
+export default downloadVideo;

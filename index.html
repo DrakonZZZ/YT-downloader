@@ -12,9 +12,10 @@
     <div class="container">
         <h1>Youtube video downloader</h1>
         <input type="text" placeholder="Your Youtube URL here" id="videoURL">
+        <div id="youtubeTitle"></div>
         <button id="downloadButton">Download</button>
         <div id="progressContainer">
-            <progress id="progressBar" min="0" max="100"></progress>
+            <progress id="progressBar" max="100" value="0">0%</progress>
         </div>
     </div>
     <script src="renderer.js"></script>

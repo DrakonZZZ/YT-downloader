@@ -3,10 +3,15 @@ const os = require('node:os');
 const path = require('node:path');
 const { downloadVideo } = require('./downloader.js');
 
+console.log('exposing download functions');
 contextBridge.exposeInMainWorld('stage', {
   os: os,
   path: path,
-  ipcRenderer: ipcRenderer,
+  downloadProgress: (handler) => {
+    ipcRenderer.on('download-progress', (e, progress, videoTitle) =>
+      handler(progress, videoTitle)
+    );
+  },
   downloadVideo: async (videoUrl, outputDir) => {
     const progressCB = (progress) => {
       ipcRenderer.send('download-progress', progress);
@@ -29,4 +34,5 @@ contextBridge.exposeInMainWorld('stage', {
       ipcRenderer.send('download-status', 'error');
     }
   },
+  downloadComplete: () => ipcRenderer.on('download-complete', (e) => {}),
 });

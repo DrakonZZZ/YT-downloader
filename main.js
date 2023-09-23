@@ -14,8 +14,8 @@ const createWindow = () => {
 
   win.loadFile('index.html');
 
-  ipcMain.on('download-progress', (e, progress) => {
-    win.webContents.send('update-progress', progress);
+  ipcMain.on('download-progress', (e, progress, videoTitle) => {
+    win.webContents.send('update-progress', { progress, videoTitle });
   });
 
   ipcMain.on('download-complete', () => {
